@@ -51,6 +51,10 @@ void experiment(int minLength, int maxLength)
 
 int main()
 {
-    experiment(1000, 50000);
+    //experiment(1000, 50000);
+    int array[10] = {5, 9, 4, 0, 3, 12, 56, 90, 11, 34};
+    mergeSort(array, 0, 9);
+
+
     return 0;
 }
