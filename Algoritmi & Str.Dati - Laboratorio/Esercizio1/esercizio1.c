@@ -5,14 +5,12 @@
 #include <stdint.h>
 #include "funzioni.h"
 
-
 clock_t singleExperiment(int length, int maxInstances)
 {
 
     int *array;
     int i, j;
     clock_t t_tot = 0;
-    
 
     for (i = 0; i < maxInstances; i++)
     {
@@ -27,18 +25,18 @@ clock_t singleExperiment(int length, int maxInstances)
 
         t_end = clock();
         t_elapsed = t_end - t_start;
-       
+
         t_tot = t_tot + t_elapsed;
     }
-    
+
     return t_tot / maxInstances;
 }
 
 void experiment(int minLength, int maxLength)
 {
 
-    int maxInstances = 50;
-    int step = 1000;
+    int maxInstances = 5;
+    int step = 5;
     clock_t time;
     int length;
 
@@ -51,6 +49,6 @@ void experiment(int minLength, int maxLength)
 
 int main()
 {
-    experiment(1000, 50000);
+    experiment(5, 2000);
     return 0;
 }

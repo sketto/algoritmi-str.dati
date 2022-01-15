@@ -5,13 +5,14 @@
 #include <stdint.h>
 
 #define RAND_SEED 200
+#define K 100
 
 int *insertionSort(int array[], int length)
 {
     int j;
     int i;
     int key;
-   // printf("\narray[j]: %d\n", array[j]);
+    // printf("\narray[j]: %d\n", array[j]);
 
     for (j = 1; j < length; j++)
     {
@@ -53,74 +54,74 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-int *mergeSort(int array[], int p, int r) {
+void merge(int *array, int p, int q, int r)
+{
+    int i, j, k;
+    i = p;
+    j = q + 1;
+    k = 0;
+    int tmp[r - p + 1];
 
-    if(p < r) {
+    while (i <= q && j <= r)
+    {
+        if (array[i] < array[j])
+        {
+            tmp[k] = array[i];
+            i++;
+        }
+        else
+        {
+            tmp[k] = array[j];
+            j++;
+        }
+        k++;
+    }
+    while (i <= q)
+    {
+        tmp[k] = array[i];
+        i++;
+        k++;
+    }
+    while (j <= r)
+    {
+        tmp[k] = array[j];
+        j++;
+        k++;
+    }
+    for (k = p; k <= r; k++)
+    {
+        array[k] = tmp[k - p];
+    }
+}
 
-        int q = (p + r) / 2;
+void mergeSort(int *array, int p, int r)
+{
+    if (p < r)
+    {
+
+        int q;
+        q = (p + r) / 2;
         mergeSort(array, p, q);
         mergeSort(array, q + 1, r);
         merge(array, p, q, r);
     }
-
-    int n = sizeof(array) / sizeof(array[0]);
-    printf("\nn: %d\n", n);
-
-    int i;
-    for(i = 0; i < n; i++) {
-
-        printf("%d ", array[i]);
-
-    }
-
-    return array;
 }
 
-void merge(int array[], int p, int q, int r) {
+void hybridSort(int *array, int p, int r)
+{
+    int length = r - p + 1;
 
-    int n1 = q - p + 1;
-    int n2 = r - q;
-
-    int leftArray[n1];
-    int rightArray[n2];
-    int i, j;
-
-    for(i = 0; i < n1; i++) {
-        leftArray[i] = array[p + i - 1];
-
-        for(j = 0; j < n2; j++) {
-            rightArray[j] = array[q + j];
-        }
+    if (length > K)
+    {
+        int q = (p + r) / 2;
+        hybridSort(array, p, q);
+        hybridSort(array, q + 1, r);
+        merge(array, p, q, r);
     }
+    else
+    {
+        //printf("\nlength: %d\n", length);
 
-    i = 0;
-    j = 0;
-
-    int k;
-    for(k = p; k < r; k++) {
-
-        if( i <= n1) {
-
-            if(j <= n2) {
-
-                if(leftArray[i] <= rightArray[j]) {
-
-                    //copyFromL(i);
-                    array[k] = leftArray[i];
-                } else {
-                    //copyFromR(j);
-                    array[k] = rightArray[j];
-
-                }
-            } else {
-                //copyFromL(i);
-                array[k] = leftArray[i];
-
-            }
-        } else {
-            //copyFromR(j);
-            array[k] = rightArray[j];
-        }
+        insertionSort(array, length);
     }
 }
-
