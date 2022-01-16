@@ -1,7 +1,11 @@
-void insertionSort(int array[], int length);
+void insertionSort(int *array, int length);
 int *generateRandomArray(int length);
 void mergeSort(int array[], int p, int r);
 void merge(int array[], int p, int q, int r);
 void hybridSort(int *array, int p, int r);
 void quickSort(int *array, int p, int r);
 int partition(int *array, int p, int r);
+void medianOfThreeQuickSort(int *array, int p, int r);
+int medianOfThreePartition(int *array, int p, int r);
+int medianOfThree(int *array, int i, int j, int k);
+void swapValue(int *array, int i, int j);

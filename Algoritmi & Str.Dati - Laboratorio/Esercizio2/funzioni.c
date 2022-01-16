@@ -7,7 +7,7 @@
 #define RAND_SEED 200
 #define K 100
 
-void insertionSort(int array[], int length)
+void insertionSort(int *array, int length)
 {
     int j;
     int i;
@@ -27,8 +27,6 @@ void insertionSort(int array[], int length)
 
         array[i + 1] = key;
     }
-
-    return array;
 }
 
 /**

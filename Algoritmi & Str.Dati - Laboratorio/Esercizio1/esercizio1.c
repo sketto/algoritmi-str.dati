@@ -21,7 +21,7 @@ clock_t singleExperiment(int length, int maxInstances)
 
         t_start = clock();
 
-        array = insertionSort(array, length);
+        insertionSort(array, length);
 
         t_end = clock();
         t_elapsed = t_end - t_start;

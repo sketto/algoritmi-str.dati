@@ -7,7 +7,7 @@
 #define RAND_SEED 200
 #define K 100
 
-void insertionSort(int array[], int length)
+void insertionSort(int *array, int length)
 {
     int j;
     int i;
@@ -27,8 +27,6 @@ void insertionSort(int array[], int length)
 
         array[i + 1] = key;
     }
-
-    return array;
 }
 
 /**
@@ -126,15 +124,13 @@ void hybridSort(int *array, int p, int r)
     }
 }
 
-void quickSort(int *array, int p, int r)
+void swapValue(int *array, int i, int j)
 {
-    if (p < r)
-    {
-        int q = partition(array, p, r);
-        quickSort(array, p, q - 1);
-        quickSort(array, q + 1, r);
-    }
+    int tmp = array[i];
+    array[i] = array[j];
+    array[j] = tmp;
 }
+
 int partition(int *array, int p, int r)
 {
     int x, i, j;
@@ -147,6 +143,91 @@ int partition(int *array, int p, int r)
         if (array[j] <= x)
         {
             i = i + 1;
+            swapValue(array, i, j);
         }
+    }
+    swapValue(array, i + 1, r);
+
+    return i + 1;
+}
+
+void quickSort(int *array, int p, int r)
+{
+    if (p < r)
+    {
+        int q = partition(array, p, r);
+        quickSort(array, p, q - 1);
+        quickSort(array, q + 1, r);
+    }
+}
+
+int medianOfThree(int *array, int i, int j, int k)
+{
+
+    if (array[i] > array[j])
+    {
+
+        if (array[j] >= array[k])
+        {
+            return j;
+        }
+        else if (array[i] < array[k])
+        {
+            return i;
+        }
+        else
+        {
+            return k;
+        }
+    }
+    else
+    {
+
+        if (array[i] >= array[k])
+        {
+            return i;
+        }
+        else if (array[j] < array[k])
+        {
+            return j;
+        }
+        else
+        {
+            return k;
+        }
+    }
+}
+
+int medianOfThreePartition(int *array, int p, int r)
+{
+    int mid = (p + r) / 2;
+    int s = medianOfThree(array, p, r, mid);
+
+    swapValue(array, s, r);
+
+    int x = array[r];
+    int i = p - 1;
+
+    int j;
+    for (j = p; j < r; j++)
+    {
+        if (array[j] <= x)
+        {
+            i = i + 1;
+            swapValue(array, i, j);
+        }
+    }
+    swapValue(array, i + 1, r);
+
+    return i + 1;
+}
+
+void medianOfThreeQuickSort(int *array, int p, int r)
+{
+    if (p < r)
+    {
+        int q = medianOfThreePartition(array, p, r);
+        medianOfThreeQuickSort(array, p, q - 1);
+        medianOfThreeQuickSort(array, q + 1, r);
     }
 }

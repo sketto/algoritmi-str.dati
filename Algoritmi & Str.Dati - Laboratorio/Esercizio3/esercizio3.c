@@ -111,6 +111,14 @@ clock_t singleExperiment(int length, int maxInstances, int alg)
 
             t_end = clock();
         }
+        else if (alg == 4) //QS con mediana tre
+        {
+            t_start = clock();
+
+            medianOfThreeQuickSort(array, 0, length - 1);
+
+            t_end = clock();
+        }
 
         t_elapsed = t_end - t_start;
         t_tot = t_tot + t_elapsed;
@@ -126,7 +134,7 @@ void experiment(int minLength, int maxLength)
 
     int maxInstances = 5;
     int step = 5;
-    clock_t timeIS, timeMS, timeHS;
+    clock_t timeIS, timeMS, timeHS, timeQS_M3;
     int length;
 
     for (length = minLength; length <= maxLength; length += step)
@@ -134,9 +142,10 @@ void experiment(int minLength, int maxLength)
         timeIS = singleExperiment(length, maxInstances, 1);
         timeMS = singleExperiment(length, maxInstances, 2);
         timeHS = singleExperiment(length, maxInstances, 3);
+        timeQS_M3 = singleExperiment(length, maxInstances, 4);
 
-        //IS; MS; HS; DIM
-        printf(" %ld; %ld; %ld; %d\n", (long int)(timeIS), (long int)(timeMS), (long int)(timeHS), length);
+        //IS; MS; HS; QS_M3; DIM
+        printf(" %ld; %ld; %ld; %ld; %d\n", (long int)(timeIS), (long int)(timeMS), (long int)(timeHS), (long int)(timeQS_M3), length);
     }
 }
 

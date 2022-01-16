@@ -5,7 +5,7 @@
 #include <stdint.h>
 #define RAND_SEED 200
 
-int *insertionSort(int array[], int length)
+void insertionSort(int *array, int length)
 {
     int j;
     int i;
@@ -25,8 +25,6 @@ int *insertionSort(int array[], int length)
 
         array[i + 1] = key;
     }
-
-    return array;
 }
 
 /**
@@ -120,7 +118,7 @@ clock_t singleExperiment(int length, int maxInstances)
 
         t_start = clock();
 
-        array = insertionSort(array, length);
+        insertionSort(array, length);
 
         t_end = clock();
         t_elapsed = t_end - t_start;
@@ -162,6 +160,7 @@ void quickSort(int *array, int p, int r)
         quickSort(array, q + 1, r);
     }
 }
+
 int partition(int *array, int p, int r)
 {
     int x, i, j;
@@ -182,6 +181,77 @@ int partition(int *array, int p, int r)
     return i + 1;
 }
 
+int medianOfThree(int *array, int i, int j, int k)
+{
+
+    if (array[i] > array[j])
+    {
+
+        if (array[j] >= array[k])
+        {
+            return j;
+        }
+        else if (array[i] < array[k])
+        {
+            return i;
+        }
+        else
+        {
+            return k;
+        }
+    }
+    else
+    {
+
+        if (array[i] >= array[k])
+        {
+            return i;
+        }
+        else if (array[j] < array[k])
+        {
+            return j;
+        }
+        else
+        {
+            return k;
+        }
+    }
+}
+
+int medianOfThreePartition(int *array, int p, int r)
+{
+    int mid = (p + r) / 2;
+    int s = medianOfThree(array, p, r, mid);
+
+    swapValue(array, s, r);
+
+    int x = array[r];
+    int i = p - 1;
+
+    int j;
+    for (j = p; j < r; j++)
+    {
+        if (array[j] <= x)
+        {
+            i = i + 1;
+            swapValue(array, i, j);
+        }
+    }
+    swapValue(array, i + 1, r);
+
+    return i + 1;
+}
+
+void medianOfThreeQuickSort(int *array, int p, int r)
+{
+    if (p < r)
+    {
+        int q = medianOfThreePartition(array, p, r);
+        medianOfThreeQuickSort(array, p, q - 1);
+        medianOfThreeQuickSort(array, q + 1, r);
+    }
+}
+
 int main()
 {
     //experiment(1000, 50000);
@@ -194,8 +264,10 @@ int main()
     {
         printf("%d ", array[i]);
     }
-    quickSort(array, 0, 9);
+    //quickSort(array, 0, 9);
+    //medianOfThreeQuickSort(array, 0, 9);
     //swapValue(array, 0, 9);
+    insertionSort(array, 10);
     printf("\ndopo\n");
 
     for (i = 0; i < 10; i++)

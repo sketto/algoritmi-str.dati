@@ -6,12 +6,12 @@
 
 #define RAND_SEED 200
 
-int *insertionSort(int array[], int length)
+void insertionSort(int *array, int length)
 {
     int j;
     int i;
     int key;
-   // printf("\narray[j]: %d\n", array[j]);
+    // printf("\narray[j]: %d\n", array[j]);
 
     for (j = 1; j < length; j++)
     {
@@ -26,8 +26,6 @@ int *insertionSort(int array[], int length)
 
         array[i + 1] = key;
     }
-
-    return array;
 }
 
 /**
