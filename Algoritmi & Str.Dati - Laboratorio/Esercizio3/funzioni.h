@@ -3,3 +3,5 @@ int *generateRandomArray(int length);
 void mergeSort(int array[], int p, int r);
 void merge(int array[], int p, int q, int r);
 void hybridSort(int *array, int p, int r);
+void quickSort(int *array, int p, int r);
+int partition(int *array, int p, int r);
