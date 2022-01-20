@@ -116,7 +116,7 @@ clock_t singleExperiment(int length, int maxInstances, int alg)
         t_tot = t_tot + t_elapsed;
     }
 
-    clock_t t_final = t_tot / maxInstances;
+    clock_t t_final = t_tot / maxInstances; //prendere tempo come double
 
     return t_final;
 }
@@ -149,3 +149,5 @@ int main()
 
     return 0;
 }
+
+//aggiungere adaptedInsertionSort

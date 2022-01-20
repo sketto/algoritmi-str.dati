@@ -147,21 +147,22 @@ void experiment(int minLength, int maxLength)
 int main()
 {
     //experiment(1000, 50000);
-    int array[10] = {5, 9, 4, 0, 3, 12, 56, 90, 11, 34};
+    int length = 10;
+    int *array = generateRandomArray(length);
     int i;
 
     printf("prima\n");
 
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < length; i++)
     {
         printf("%d ", array[i]);
     }
     //mergeSort(array, 0, 9);
 
-    insertionSort(array, 10);
+    insertionSort(array, length);
     printf("\ndopo\n");
 
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < length; i++)
     {
         printf("%d ", array[i]);
     }

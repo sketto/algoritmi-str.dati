@@ -52,7 +52,7 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-void merge(int *array, int p, int q, int r)
+void merge(int *array, int p, int q, int r) //da correggere --> come da trasparenze
 {
     int i, j, k;
     i = p;

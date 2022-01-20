@@ -97,21 +97,22 @@ void experiment(int minLength, int maxLength)
 int main()
 {
     //experiment(5, 2000);
-
-    int array[5] = {4, 98, 5, 2, 87};
+    int length = 10;
+    int *array = generateRandomArray(length);
     int i;
+
     printf("prima\n");
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < length; i++)
     {
         printf("%d ", array[i]);
     }
 
-    insertionSort(array, 5);
+    insertionSort(array, length);
 
     printf("\ndopo\n");
 
-    for (i = 0; i < 5; i++)
+    for (i = 0; i < length; i++)
     {
         printf("%d ", array[i]);
     }
