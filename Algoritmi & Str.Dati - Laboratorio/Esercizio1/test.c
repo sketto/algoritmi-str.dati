@@ -3,9 +3,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdint.h>
+#include "funzioni.h"
 
 #define RAND_SEED 200
-#define K 100
 
 void insertionSort(int *array, int length)
 {
@@ -52,72 +52,69 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-void merge(int *array, int p, int q, int r)
+clock_t singleExperiment(int length, int maxInstances)
 {
-    int i, j, k;
-    i = p;
-    j = q + 1;
-    k = 0;
-    int tmp[r - p + 1];
 
-    while (i <= q && j <= r)
-    {
-        if (array[i] < array[j])
-        {
-            tmp[k] = array[i];
-            i++;
-        }
-        else
-        {
-            tmp[k] = array[j];
-            j++;
-        }
-        k++;
-    }
-    while (i <= q)
-    {
-        tmp[k] = array[i];
-        i++;
-        k++;
-    }
-    while (j <= r)
-    {
-        tmp[k] = array[j];
-        j++;
-        k++;
-    }
-    for (k = p; k <= r; k++)
-    {
-        array[k] = tmp[k - p];
-    }
-}
+    int *array;
+    int i, j;
+    clock_t t_tot = 0;
 
-void mergeSort(int *array, int p, int r)
-{
-    if (p < r)
+    for (i = 0; i < maxInstances; i++)
     {
 
-        int q;
-        q = (p + r) / 2;
-        mergeSort(array, p, q);
-        mergeSort(array, q + 1, r);
-        merge(array, p, q, r);
-    }
-}
+        clock_t t_start, t_end, t_elapsed;
 
-void hybridSort(int *array, int p, int r)
-{
-    int length = r - p + 1;
+        array = generateRandomArray(length);
 
-    if (length > K)
-    {
-        int q = (p + r) / 2;
-        hybridSort(array, p, q);
-        hybridSort(array, q + 1, r);
-        merge(array, p, q, r);
-    }
-    else
-    {
+        t_start = clock();
+
         insertionSort(array, length);
+
+        t_end = clock();
+        t_elapsed = t_end - t_start;
+
+        t_tot = t_tot + t_elapsed;
     }
+
+    return t_tot / maxInstances;
+}
+
+void experiment(int minLength, int maxLength)
+{
+
+    int maxInstances = 5;
+    int step = 5;
+    clock_t time;
+    int length;
+
+    for (length = minLength; length <= maxLength; length += step)
+    {
+        time = singleExperiment(length, maxInstances);
+        printf("%ld; %d\n", (long int)(time), length);
+    }
+}
+
+int main()
+{
+    //experiment(5, 2000);
+
+    int array[5] = {4, 98, 5, 2, 87};
+    int i;
+    printf("prima\n");
+
+    for (i = 0; i < 5; i++)
+    {
+        printf("%d ", array[i]);
+    }
+
+    insertionSort(array, 5);
+
+    printf("\ndopo\n");
+
+    for (i = 0; i < 5; i++)
+    {
+        printf("%d ", array[i]);
+    }
+
+    return 0;
 }
