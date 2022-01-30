@@ -7,6 +7,28 @@
 #define RAND_SEED 200
 #define K 100
 
+void adaptedInsertionSort(int *array, int p, int r)
+{
+    int j;
+    int i;
+    int key;
+    // printf("\narray[j]: %d\n", array[j]);
+
+    for (j = p; j < r; j++)
+    {
+        key = array[j];
+        i = j - 1;
+
+        while (i >= 0 && array[i] > key)
+        {
+            array[i + 1] = array[i];
+            i = i - 1;
+        }
+
+        array[i + 1] = key;
+    }
+}
+
 void insertionSort(int *array, int length)
 {
     int j;
@@ -118,6 +140,7 @@ void hybridSort(int *array, int p, int r)
     }
     else
     {
-        insertionSort(array, length);
+        //insertionSort(array, length);
+        adaptedInsertionSort(array, p, r);
     }
 }

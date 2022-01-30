@@ -47,7 +47,7 @@
 //     }
 // }
 
-clock_t singleExperiment(int length, int maxInstances, int alg)
+double singleExperiment(int length, int maxInstances, int alg)
 {
 
     int *array;
@@ -116,7 +116,8 @@ clock_t singleExperiment(int length, int maxInstances, int alg)
         t_tot = t_tot + t_elapsed;
     }
 
-    clock_t t_final = t_tot / maxInstances; //prendere tempo come double
+    //clock_t t_final = t_tot / maxInstances; //prendere tempo come double
+    double t_final = (double)t_tot / (double)maxInstances;
 
     return t_final;
 }
@@ -126,7 +127,7 @@ void experiment(int minLength, int maxLength)
 
     int maxInstances = 5;
     int step = 5;
-    clock_t timeIS, timeMS, timeHS;
+    double timeIS, timeMS, timeHS;
     int length;
 
     for (length = minLength; length <= maxLength; length += step)
@@ -136,7 +137,7 @@ void experiment(int minLength, int maxLength)
         timeHS = singleExperiment(length, maxInstances, 3);
 
         //IS; MS; HS; DIM
-        printf(" %ld; %ld; %ld; %d\n", (long int)(timeIS), (long int)(timeMS), (long int)(timeHS), length);
+        printf(" %f; %f; %f; %d\n", timeIS, timeMS, timeHS, length);
     }
 }
 

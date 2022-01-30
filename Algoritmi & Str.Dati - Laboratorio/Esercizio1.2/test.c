@@ -3,7 +3,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <stdint.h>
+
 #define RAND_SEED 200
+#define K 100
 
 void insertionSort(int *array, int length)
 {
@@ -143,6 +145,64 @@ void experiment(int minLength, int maxLength)
         printf("%ld; %d\n", (long int)(time), length);
     }
 }
+void adaptedInsertionSort(int *array, int p, int r)
+{
+
+    int j;
+    int i;
+    int key;
+
+    printf("\nbefore adaptedIS:\n ");
+
+    for (i = 0; i <= r; i++)
+    {
+        printf("%d ", array[i]);
+    }
+    // printf("\narray[j]: %d\n", array[j]);
+
+    for (j = p; j <= r; j++)
+    {
+        key = array[j];
+        i = j - 1;
+
+        while (i >= 0 && array[i] > key)
+        {
+            array[i + 1] = array[i];
+            i = i - 1;
+        }
+
+        array[i + 1] = key;
+    }
+
+    printf("\nafter adaptedIS:\n ");
+
+    for (i = 0; i <= r; i++)
+    {
+        printf("%d ", array[i]);
+    }
+    printf("\n");
+}
+
+void hybridSort(int *array, int p, int r)
+{
+    int length = r - p + 1;
+
+    if (length > K)
+    {
+        int q = (p + r) / 2;
+        hybridSort(array, p, q);
+        hybridSort(array, q + 1, r);
+        merge(array, p, q, r);
+    }
+    else
+    {
+        //insertionSort(array, length);
+        printf("\np: %d\n", p);
+        printf("\nr: %d\n", r);
+
+        adaptedInsertionSort(array, p, r);
+    }
+}
 
 int main()
 {
@@ -159,7 +219,11 @@ int main()
     }
     //mergeSort(array, 0, 9);
 
-    insertionSort(array, length);
+    //insertionSort(array, length);
+    //adaptedInsertionSort(array, 2, 5);
+
+    hybridSort(array, 7, length - 1);
+
     printf("\ndopo\n");
 
     for (i = 0; i < length; i++)
