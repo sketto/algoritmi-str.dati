@@ -107,7 +107,7 @@ struct treeNode *getRandomNode()
     return node;
 }
 
-bstTreeSearch(struct treeNode *x, int key)
+struct treeNode *bstTreeSearch(struct treeNode *x, int key)
 {
     if (x == NULL || x->key == key)
     {
@@ -124,40 +124,94 @@ bstTreeSearch(struct treeNode *x, int key)
     }
 }
 
-void bstTransplant()
+void bstTreeTransplant(struct tree *t, struct treeNode *u, struct treeNode *v)
 {
-}
-struct treeNode *bstTreeMinimum()
-{
+    if (u->parent == NULL)
+    {
+        t->root = v;
+    }
+
+    if (u->parent != NULL && u == u->parent->leftChild)
+    {
+        u->parent->leftChild = v;
+    }
+
+    if (u->parent != NULL && u == u->parent->rightChild)
+    {
+        u->parent->rightChild = v;
+    }
+
+    if (v != NULL)
+    {
+        v->parent = u->parent;
+    }
 }
 
-bstTreeDelete(struct tree *t, struct treeNode *z)
+struct treeNode *bstTreeMinimum(struct treeNode *x)
+{
+    if (x->leftChild == NULL)
+    {
+        return x;
+    }
+
+    return bstTreeMinimum(x->leftChild);
+}
+
+void bstTreeDelete(struct tree *t, struct treeNode *z)
 {
     if (z->leftChild == NULL)
     {
-        bstTreeTransplant();
+        bstTreeTransplant(t, z, z->rightChild);
     }
 
     if (z->leftChild != NULL && z->rightChild == NULL)
     {
-        bstTreeTransplant();
+        bstTreeTransplant(t, z, z->leftChild);
     }
 
     if (z->leftChild != NULL && z->rightChild != NULL)
     {
-        struct treeNode *y = bstTreeMinimum();
+        struct treeNode *y = bstTreeMinimum(z->rightChild);
 
         if (y->parent != z)
         {
-            bstTransplant();
+            bstTreeTransplant(t, y, y->rightChild);
             y->rightChild = z->rightChild;
             y->rightChild->parent = y;
         }
-        bstTreeTransplant();
+
+        bstTreeTransplant(t, z, y);
         y->leftChild = z->leftChild;
         y->leftChild->parent = y;
     }
+
+    free(z);
 }
+
+void deleteTree(struct treeNode *node)
+{
+    if (node->leftChild)
+    {
+        deleteTree(node->leftChild);
+        free(node->leftChild);
+    }
+    if (node->rightChild)
+    {
+        deleteTree(node->rightChild);
+        free(node->rightChild);
+    }
+}
+
+void empty(struct tree *t)
+{
+    if (t->root != NULL)
+    {
+        deleteTree(t->root);
+    }
+
+    free(t);
+}
+
 double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
 {
 
@@ -167,9 +221,8 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
     for (i = 0; i < maxInstances; i++)
     {
         //initialize(T)
-        struct tree t;
-        t.root = NULL;
-        t.cardinality = 0;
+        struct tree *t = (struct tree *)malloc(sizeof(struct tree));
+        t->root = NULL;
 
         clock_t t_start, t_end, t_elapsed;
 
@@ -177,17 +230,17 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
         for (j = 0; j < maxKeys; j++)
         {
-            bstTreeInsert(&t, getRandomNode());
+            bstTreeInsert(t, getRandomNode());
         }
 
         for (j = 0; j < maxSearch; j++)
         {
-            bstTreeSearch(t.root, getRandomNode()->key);
+            bstTreeSearch(t->root, getRandomNode()->key);
         }
 
         for (j = 0; j < maxDelete; j++)
         {
-            //bstTreeDelete();
+            bstTreeDelete(t, getRandomNode());
         }
 
         t_end = clock();
@@ -195,7 +248,9 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
         t_elapsed = t_end - t_start;
 
         t_tot = t_tot + t_elapsed;
+
         //empty()
+        empty(t);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -216,7 +271,7 @@ void experiment(int minKeys, int maxKeys)
         maxDelete = keys - maxSearch;
         clock_t time = singleExperiment(keys, maxSearch, maxDelete, maxInstances);
 
-        printf("\ntime: %Ld", (long int)time);
+        printf("\ntime: %ld", (long int)time);
         randSeed++;
     }
 }
@@ -224,27 +279,29 @@ void experiment(int minKeys, int maxKeys)
 int main()
 {
 
-    struct tree t;
-    t.root = NULL;
-    t.cardinality = 0;
+    experiment(1, 50);
 
-    int i;
+    // struct tree t;
+    // t.root = NULL;
+    // t.cardinality = 0;
 
-    int array[] = {3, 9, 1, 2, 22, 12, 98, 54, 31, 0};
+    // int i;
 
-    for (i = 0; i < 10; i++)
-    {
-        struct treeNode *node = (struct treeNode *)malloc(sizeof(struct treeNode));
-        node->leftChild = NULL;
-        node->rightChild = NULL;
-        node->parent = NULL;
-        node->key = array[i];
-        bstTreeInsert(&t, node);
-        t.cardinality++;
-        printf("\ni: %d\n", i);
-    }
+    // int array[] = {3, 9, 1, 2, 22, 12, 98, 54, 31, 0};
 
-    printBstTree(&t);
+    // for (i = 0; i < 10; i++)
+    // {
+    //     struct treeNode *node = (struct treeNode *)malloc(sizeof(struct treeNode));
+    //     node->leftChild = NULL;
+    //     node->rightChild = NULL;
+    //     node->parent = NULL;
+    //     node->key = array[i];
+    //     bstTreeInsert(&t, node);
+    //     t.cardinality++;
+    //     printf("\ni: %d\n", i);
+    // }
+
+    // printBstTree(&t);
     // printf("\n%d\n", t.root->key);
     // printf("\n%d\n", t.root->leftChild->key);
     // printf("\n%d\n", t.root->rightChild->key);
