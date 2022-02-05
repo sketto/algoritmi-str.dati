@@ -74,43 +74,56 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-void merge(int *array, int p, int q, int r) //da correggere --> come da trasparenze
+void merge(int *array, int p, int q, int r)
 {
-    int i, j, k;
-    i = p;
-    j = q + 1;
-    k = 0;
-    int tmp[r - p + 1];
 
-    while (i <= q && j <= r)
+    int n1 = q - p + 1;
+    int n2 = r - q;
+
+    int arrL[n1], arrR[n2], i, j;
+
+    for (i = 0; i < n1; i++)
     {
-        if (array[i] < array[j])
+        arrL[i] = array[p + (i + 1) - 1];
+    }
+
+    for (j = 0; j < n2; j++)
+    {
+        arrR[j] = array[q + (j + 1)];
+    }
+
+    i = 0;
+    j = 0;
+
+    int k;
+    for (k = p; k <= r; k++)
+    {
+        if (i < n1)
         {
-            tmp[k] = array[i];
-            i++;
+            if (j < n2)
+            {
+                if (arrL[i] <= arrR[j])
+                {
+                    array[k] = arrL[i];
+                    i++;
+                }
+                else
+                {
+                    array[k] = arrR[j];
+                    j++;
+                }
+            }
+            else
+            {
+                array[k] = arrL[i];
+                i++;
+            }
         }
         else
         {
-            tmp[k] = array[j];
+            array[k] = arrR[j];
             j++;
         }
-        k++;
-    }
-    while (i <= q)
-    {
-        tmp[k] = array[i];
-        i++;
-        k++;
-    }
-    while (j <= r)
-    {
-        tmp[k] = array[j];
-        j++;
-        k++;
-    }
-    for (k = p; k <= r; k++)
-    {
-        array[k] = tmp[k - p];
     }
 }
 
@@ -140,6 +153,7 @@ void hybridSort(int *array, int p, int r)
     }
     else
     {
+
         //insertionSort(array, length);
         adaptedInsertionSort(array, p, r);
     }
@@ -215,6 +229,10 @@ double singleExperiment(int length, int maxInstances, int alg)
     }
 
     //clock_t t_final = t_tot / maxInstances; //prendere tempo come double
+
+    // fprintf(stderr, "\nt_tot: %d\n", t_tot);
+    // fprintf(stderr, "\nmaxInstances: %d\n", maxInstances);
+
     double t_final = (double)t_tot / (double)maxInstances;
 
     return t_final;
@@ -224,7 +242,7 @@ void experiment(int minLength, int maxLength)
 {
 
     int maxInstances = 5;
-    int step = 5;
+    int step = 10;
     double timeIS, timeMS, timeHS;
     int length;
 
@@ -235,7 +253,7 @@ void experiment(int minLength, int maxLength)
         timeHS = singleExperiment(length, maxInstances, 3);
 
         //IS; MS; HS; DIM
-        printf(" %f; %f; %f; %d\n", timeIS, timeMS, timeHS, length);
+        fprintf(stderr, " %f; %f; %f; %d\n", timeIS, timeMS, timeHS, length);
     }
 }
 
@@ -244,7 +262,7 @@ int main()
     //experiment(1000, 50000);
     // int array[10] = {5, 9, 4, 0, 3, 12, 56, 90, 11, 34};
     //mergeSort(array, 0, 9);
-    experiment(5, 1500);
+    experiment(10, 1000);
 
     return 0;
 }

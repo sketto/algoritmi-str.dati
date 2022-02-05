@@ -52,52 +52,6 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-void merge2(int arr[], int l, int m, int r)
-{
-    int i, j, k;
-    int n1 = m - l + 1;
-    int n2 = r - m;
-    // Create temp arrays
-    int L[n1], R[n2];
-    // Copy data to temp array
-    for (i = 0; i < n1; i++)
-        L[i] = arr[l + i];
-    for (j = 0; j < n2; j++)
-        R[j] = arr[m + 1 + j];
-    // Merge the temp arrays
-    i = 0;
-    j = 0;
-    k = l;
-    while (i < n1 && j < n2)
-    {
-        if (L[i] <= R[j])
-        {
-            arr[k] = L[i];
-            i++;
-        }
-        else
-        {
-            arr[k] = R[j];
-            j++;
-        }
-        k++;
-    }
-    // Copy the remaining elements of L[]
-    while (i < n1)
-    {
-        arr[k] = L[i];
-        i++;
-        k++;
-    }
-    // Copy the remaining elements of R[]
-    while (j < n2)
-    {
-        arr[k] = R[j];
-        j++;
-        k++;
-    }
-}
-
 void merge(int *array, int p, int q, int r)
 {
 
@@ -193,8 +147,8 @@ clock_t singleExperiment(int length, int maxInstances)
 void experiment(int minLength, int maxLength)
 {
 
-    int maxInstances = 50;
-    int step = 1000;
+    int maxInstances = 5;
+    int step = 10;
     clock_t time;
     int length;
 
@@ -266,29 +220,29 @@ void hybridSort(int *array, int p, int r)
 
 int main()
 {
-    //experiment(1000, 50000);
-    int length = 10;
-    int *array = generateRandomArray(length);
-    int i;
+    experiment(10, 2000);
+    // int length = 10;
+    // int *array = generateRandomArray(length);
+    // int i;
 
-    printf("prima\n");
+    // printf("prima\n");
 
-    for (i = 0; i < length; i++)
-    {
-        fprintf(stderr, "%d ", array[i]);
-    }
-    mergeSort(array, 0, 9);
+    // for (i = 0; i < length; i++)
+    // {
+    //     fprintf(stderr, "%d ", array[i]);
+    // }
+    // mergeSort(array, 0, 9);
 
-    //insertionSort(array, length);
-    //adaptedInsertionSort(array, 2, 5);
+    // //insertionSort(array, length);
+    // //adaptedInsertionSort(array, 2, 5);
 
-    //hybridSort(array, 7, length - 1);
+    // //hybridSort(array, 7, length - 1);
 
-    printf("\ndopo\n");
+    // printf("\ndopo\n");
 
-    for (i = 0; i < length; i++)
-    {
-        printf("%d ", array[i]);
-    }
+    // for (i = 0; i < length; i++)
+    // {
+    //     printf("%d ", array[i]);
+    // }
     return 0;
 }
