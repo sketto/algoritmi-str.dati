@@ -52,43 +52,102 @@ int *generateRandomArray(int length)
     return vet;
 }
 
-void merge(int *array, int p, int q, int r)
+void merge2(int arr[], int l, int m, int r)
 {
     int i, j, k;
-    i = p;
-    j = q + 1;
-    k = 0;
-    int tmp[r - p + 1];
-
-    while (i <= q && j <= r)
+    int n1 = m - l + 1;
+    int n2 = r - m;
+    // Create temp arrays
+    int L[n1], R[n2];
+    // Copy data to temp array
+    for (i = 0; i < n1; i++)
+        L[i] = arr[l + i];
+    for (j = 0; j < n2; j++)
+        R[j] = arr[m + 1 + j];
+    // Merge the temp arrays
+    i = 0;
+    j = 0;
+    k = l;
+    while (i < n1 && j < n2)
     {
-        if (array[i] < array[j])
+        if (L[i] <= R[j])
         {
-            tmp[k] = array[i];
+            arr[k] = L[i];
             i++;
         }
         else
         {
-            tmp[k] = array[j];
+            arr[k] = R[j];
             j++;
         }
         k++;
     }
-    while (i <= q)
+    // Copy the remaining elements of L[]
+    while (i < n1)
     {
-        tmp[k] = array[i];
+        arr[k] = L[i];
         i++;
         k++;
     }
-    while (j <= r)
+    // Copy the remaining elements of R[]
+    while (j < n2)
     {
-        tmp[k] = array[j];
+        arr[k] = R[j];
         j++;
         k++;
     }
+}
+
+void merge(int *array, int p, int q, int r)
+{
+
+    int n1 = q - p + 1;
+    int n2 = r - q;
+
+    int arrL[n1], arrR[n2], i, j;
+
+    for (i = 0; i < n1; i++)
+    {
+        arrL[i] = array[p + (i + 1) - 1];
+    }
+
+    for (j = 0; j < n2; j++)
+    {
+        arrR[j] = array[q + (j + 1)];
+    }
+
+    i = 0;
+    j = 0;
+
+    int k;
     for (k = p; k <= r; k++)
     {
-        array[k] = tmp[k - p];
+        if (i < n1)
+        {
+            if (j < n2)
+            {
+                if (arrL[i] <= arrR[j])
+                {
+                    array[k] = arrL[i];
+                    i++;
+                }
+                else
+                {
+                    array[k] = arrR[j];
+                    j++;
+                }
+            }
+            else
+            {
+                array[k] = arrL[i];
+                i++;
+            }
+        }
+        else
+        {
+            array[k] = arrR[j];
+            j++;
+        }
     }
 }
 
@@ -96,11 +155,11 @@ void mergeSort(int *array, int p, int r)
 {
     if (p < r)
     {
-        int centro;
-        centro = (p + r) / 2;
-        mergeSort(array, p, centro);
-        mergeSort(array, centro + 1, r);
-        merge(array, p, centro, r);
+        int q;
+        q = (p + r) / 2;
+        mergeSort(array, p, q);
+        mergeSort(array, q + 1, r);
+        merge(array, p, q, r);
     }
 }
 
@@ -145,6 +204,7 @@ void experiment(int minLength, int maxLength)
         printf("%ld; %d\n", (long int)(time), length);
     }
 }
+
 void adaptedInsertionSort(int *array, int p, int r)
 {
 
@@ -152,7 +212,7 @@ void adaptedInsertionSort(int *array, int p, int r)
     int i;
     int key;
 
-    printf("\nbefore adaptedIS:\n ");
+    //printf("\nbefore adaptedIS:\n ");
 
     for (i = 0; i <= r; i++)
     {
@@ -174,13 +234,13 @@ void adaptedInsertionSort(int *array, int p, int r)
         array[i + 1] = key;
     }
 
-    printf("\nafter adaptedIS:\n ");
+    //printf("\nafter adaptedIS:\n ");
 
-    for (i = 0; i <= r; i++)
-    {
-        printf("%d ", array[i]);
-    }
-    printf("\n");
+    // for (i = 0; i <= r; i++)
+    // {
+    //     printf("%d ", array[i]);
+    // }
+    //printf("\n");
 }
 
 void hybridSort(int *array, int p, int r)
@@ -215,14 +275,14 @@ int main()
 
     for (i = 0; i < length; i++)
     {
-        printf("%d ", array[i]);
+        fprintf(stderr, "%d ", array[i]);
     }
-    //mergeSort(array, 0, 9);
+    mergeSort(array, 0, 9);
 
     //insertionSort(array, length);
     //adaptedInsertionSort(array, 2, 5);
 
-    hybridSort(array, 7, length - 1);
+    //hybridSort(array, 7, length - 1);
 
     printf("\ndopo\n");
 
