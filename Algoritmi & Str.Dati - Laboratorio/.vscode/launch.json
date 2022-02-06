@@ -8,7 +8,7 @@
             "name": "gcc-11 - Build and debug active file",
             "type": "cppdbg",
             "request": "launch",
-            "program": "/home/sketto/Desktop/Algoritmi & Str.Dati - Laboratorio/Esercizio1.2/main",
+            "program": "/home/sketto/Desktop/Algoritmi & Str.Dati - Laboratorio/Esercizio1.3/main",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${fileDirname}",

@@ -61,15 +61,15 @@ double singleExperiment(int length, int maxInstances, int alg)
 
         array = generateRandomArray(length);
 
-        //int index;
-        // printf("random array:\n");
-        // for (index = 0; index < length; index++)
-        // {
-        //     printf(" %d ", array[index]);
-        // }
-        // printf("\n");
+        // int index;
+        //  printf("random array:\n");
+        //  for (index = 0; index < length; index++)
+        //  {
+        //      printf(" %d ", array[index]);
+        //  }
+        //  printf("\n");
 
-        if (alg == 1) //IS
+        if (alg == 1) // IS
         {
             t_start = clock();
             insertionSort(array, length);
@@ -83,7 +83,7 @@ double singleExperiment(int length, int maxInstances, int alg)
 
             t_end = clock();
         }
-        else if (alg == 2) //MG
+        else if (alg == 2) // MG
         {
             t_start = clock();
             mergeSort(array, 0, length - 1);
@@ -97,7 +97,7 @@ double singleExperiment(int length, int maxInstances, int alg)
 
             t_end = clock();
         }
-        else if (alg == 3) //HS
+        else if (alg == 3) // HS
         {
             t_start = clock();
             hybridSort(array, 0, length - 1);
@@ -111,7 +111,7 @@ double singleExperiment(int length, int maxInstances, int alg)
 
             t_end = clock();
         }
-        else if (alg == 4) //QS con mediana tre
+        else if (alg == 4) // QS con mediana di tre
         {
             t_start = clock();
 
@@ -144,16 +144,16 @@ void experiment(int minLength, int maxLength)
         timeHS = singleExperiment(length, maxInstances, 3);
         timeQS_M3 = singleExperiment(length, maxInstances, 4);
 
-        //IS; MS; HS; QS_M3; DIM
+        // IS; MS; HS; QS_M3; DIM
         printf(" %f; %f; %f; %f; %d\n", timeIS, timeMS, timeHS, timeQS_M3, length);
     }
 }
 
 int main()
 {
-    //experiment(1000, 50000);
-    // int array[10] = {5, 9, 4, 0, 3, 12, 56, 90, 11, 34};
-    //mergeSort(array, 0, 9);
+    // experiment(1000, 50000);
+    //  int array[10] = {5, 9, 4, 0, 3, 12, 56, 90, 11, 34};
+    // mergeSort(array, 0, 9);
     experiment(5, 1500);
 
     return 0;
