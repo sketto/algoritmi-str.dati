@@ -127,6 +127,19 @@ struct treeNode *getRandomNode()
     return node;
 }
 
+struct treeNodeRB *getRandomNodeRBT()
+{
+    struct treeNodeRB *node = (struct treeNodeRB *)malloc(sizeof(struct treeNodeRB));
+    node->leftChild = NULL;
+    node->rightChild = NULL;
+    node->parent = NULL;
+    node->color = RED;
+
+    node->key = rand() % randSeed;
+
+    return node;
+}
+
 struct treeNode *bstTreeSearch(struct treeNode *x, int key)
 {
     if (x == NULL || x->key == key)
@@ -141,6 +154,23 @@ struct treeNode *bstTreeSearch(struct treeNode *x, int key)
     else
     {
         return bstTreeSearch(x->rightChild, key);
+    }
+}
+
+struct treeNodeRB *rbtTreeSearch(struct treeNodeRB *x, int key)
+{
+    if (x == NULL || x->key == key)
+    {
+        return x;
+    }
+
+    if (key <= x->key)
+    {
+        return rbtTreeSearch(x->leftChild, key);
+    }
+    else
+    {
+        return rbtTreeSearch(x->rightChild, key);
     }
 }
 
@@ -222,11 +252,66 @@ void deleteTree(struct treeNode *node)
     }
 }
 
+void deleteTreeRB(struct treeNodeRB *node)
+{
+    if (node->leftChild)
+    {
+        deleteTreeRB(node->leftChild);
+        free(node->leftChild);
+    }
+    if (node->rightChild)
+    {
+        deleteTreeRB(node->rightChild);
+        free(node->rightChild);
+    }
+}
+
+// void rbtTreeDelete(struct treeRB *t, struct treeNodeRB *z)
+// {
+//     if (z->leftChild == NULL)
+//     {
+//         bstTreeTransplant(t, z, z->rightChild);
+//     }
+
+//     if (z->leftChild != NULL && z->rightChild == NULL)
+//     {
+//         bstTreeTransplant(t, z, z->leftChild);
+//     }
+
+//     if (z->leftChild != NULL && z->rightChild != NULL)
+//     {
+//         struct treeNodeRB *y = bstTreeMinimum(z->rightChild);
+
+//         if (y->parent != z)
+//         {
+//             bstTreeTransplant(t, y, y->rightChild);
+//             y->rightChild = z->rightChild;
+//             y->rightChild->parent = y;
+//         }
+
+//         bstTreeTransplant(t, z, y);
+//         y->leftChild = z->leftChild;
+//         y->leftChild->parent = y;
+//     }
+
+//     free(z);
+// }
+
 void empty(struct tree *t)
 {
     if (t->root != NULL)
     {
         deleteTree(t->root);
+    }
+
+    free(t);
+}
+
+void emptyRB(struct treeRB *t)
+{
+    if (t->root != NULL)
+    {
+        deleteTreeRB(t->root);
     }
 
     free(t);
@@ -355,10 +440,14 @@ void rbtTreeInsertFixUpRight(struct treeRB *t, struct treeNodeRB *z)
 
 void rbtTreeInsertFixUp(struct treeRB *t, struct treeNodeRB *z)
 {
-    while (z->parent->color == RED)
+
+    while (z->parent != NULL /*condizione aggiunta*/ && z->parent->color == RED)
     {
+        fprintf(stderr, "\nqui\n");
+
         if (z->parent == z->parent->parent->leftChild)
         {
+
             rbtTreeInsertFixUpLeft(t, z);
         }
         else
@@ -373,8 +462,8 @@ void rbtTreeInsertFixUp(struct treeRB *t, struct treeNodeRB *z)
 
 void rbtTreeInsert(struct treeRB *t, struct treeNodeRB *z)
 {
-    struct treeNode *y = NULL;
-    struct treeNode *x = t->root;
+    struct treeNodeRB *y = NULL;
+    struct treeNodeRB *x = t->root;
 
     while (x != NULL)
     {
@@ -414,7 +503,7 @@ void rbtTreeInsert(struct treeRB *t, struct treeNodeRB *z)
     rbtTreeInsertFixUp(t, z);
 }
 
-double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
+double singleExperimentBST(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
 {
 
     clock_t t_tot = 0;
@@ -440,10 +529,10 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
             bstTreeSearch(t->root, getRandomNode()->key);
         }
 
-        for (j = 0; j < maxDelete; j++)
-        {
-            bstTreeDelete(t, getRandomNode());
-        }
+        // for (j = 0; j < maxDelete; j++)
+        // {
+        //     bstTreeDelete(t, getRandomNode());
+        // }
 
         t_end = clock();
 
@@ -453,6 +542,52 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
         // empty()
         empty(t);
+    }
+
+    return (double)t_tot / (double)maxKeys;
+}
+
+double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
+{
+
+    fprintf(stderr, "\nstart singleExperimentRBT\n");
+
+    clock_t t_tot = 0;
+    int i, j;
+
+    for (i = 0; i < maxInstances; i++)
+    {
+        // initialize(T)
+        struct treeRB *t = (struct treeRB *)malloc(sizeof(struct treeRB));
+        t->root = NULL;
+
+        clock_t t_start, t_end, t_elapsed;
+
+        t_start = clock();
+
+        for (j = 0; j < maxKeys; j++)
+        {
+
+            rbtTreeInsert(t, getRandomNodeRBT());
+        }
+
+        for (j = 0; j < maxSearch; j++)
+        {
+            rbtTreeSearch(t->root, getRandomNodeRBT()->key);
+        }
+
+        // for (j = 0; j < maxDelete; j++)
+        // {
+        //     rbtTreeDelete(t, getRandomNodeRBT());
+        // }
+
+        t_end = clock();
+
+        t_elapsed = t_end - t_start;
+
+        t_tot = t_tot + t_elapsed;
+        // empty()
+        emptyRB(t);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -471,9 +606,12 @@ void experiment(int minKeys, int maxKeys)
         srand(randSeed);
         maxSearch = keys * percentageSearch / 100;
         maxDelete = keys - maxSearch;
-        clock_t time = singleExperiment(keys, maxSearch, maxDelete, maxInstances);
+        double timeBST = singleExperimentBST(keys, maxSearch, maxDelete, maxInstances);
 
-        printf("\ntime: %ld", (long int)time);
+        srand(randSeed);
+        double timeRBT = singleExperimentRBT(keys, maxSearch, maxDelete, maxInstances);
+
+        fprintf(stderr, "%f %f %d\n", timeBST, timeRBT, keys);
         randSeed++;
     }
 }
@@ -481,7 +619,7 @@ void experiment(int minKeys, int maxKeys)
 int main()
 {
 
-    experiment(1, 50);
+    experiment(1, 1000);
 
     // struct tree t;
     // t.root = NULL;

@@ -220,7 +220,7 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
     for (i = 0; i < maxInstances; i++)
     {
-        //initialize(T)
+        // initialize(T)
         struct tree *t = (struct tree *)malloc(sizeof(struct tree));
         t->root = NULL;
 
@@ -249,7 +249,7 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
         t_tot = t_tot + t_elapsed;
 
-        //empty()
+        // empty()
         empty(t);
     }
 
@@ -269,9 +269,9 @@ void experiment(int minKeys, int maxKeys)
         srand(randSeed);
         maxSearch = keys * percentageSearch / 100;
         maxDelete = keys - maxSearch;
-        clock_t time = singleExperiment(keys, maxSearch, maxDelete, maxInstances);
+        double time = singleExperiment(keys, maxSearch, maxDelete, maxInstances);
 
-        printf("\ntime: %ld", (long int)time);
+        fprintf(stderr, "%f %d\n", time, keys);
         randSeed++;
     }
 }
@@ -279,7 +279,7 @@ void experiment(int minKeys, int maxKeys)
 int main()
 {
 
-    experiment(1, 50);
+    experiment(1, 1000);
 
     // struct tree t;
     // t.root = NULL;
