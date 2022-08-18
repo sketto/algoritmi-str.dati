@@ -42,9 +42,9 @@ void init_TNIL()
 {
     // t_nil = (struct treeNodeRB *)malloc(sizeof(struct treeNodeRB));
     t_nil->color = BLACK;
-    t_nil->parent = t_nil;
-    t_nil->leftChild = t_nil;
-    t_nil->rightChild = t_nil;
+    t_nil->parent = NULL;
+    t_nil->leftChild = NULL;
+    t_nil->rightChild = NULL;
 };
 
 struct treeRB
@@ -233,157 +233,6 @@ struct treeNodeRB *rbtTreeSearch(struct treeNodeRB *x, int key)
     }
 }
 
-void bstTreeTransplant(struct tree *t, struct treeNode *u, struct treeNode *v)
-{
-    if (u->parent == NULL)
-    {
-        t->root = v;
-    }
-
-    if (u->parent != NULL && u == u->parent->leftChild)
-    {
-        u->parent->leftChild = v;
-    }
-
-    if (u->parent != NULL && u == u->parent->rightChild)
-    {
-        u->parent->rightChild = v;
-    }
-
-    if (v != NULL)
-    {
-        v->parent = u->parent;
-    }
-}
-
-struct treeNode *bstTreeMinimum(struct treeNode *x)
-{
-    if (x->leftChild == NULL)
-    {
-        return x;
-    }
-
-    return bstTreeMinimum(x->leftChild);
-}
-
-void bstTreeDelete(struct tree *t, struct treeNode *z)
-{
-    if (z->leftChild == NULL)
-    {
-        bstTreeTransplant(t, z, z->rightChild);
-    }
-
-    if (z->leftChild != NULL && z->rightChild == NULL)
-    {
-        bstTreeTransplant(t, z, z->leftChild);
-    }
-
-    if (z->leftChild != NULL && z->rightChild != NULL)
-    {
-        struct treeNode *y = bstTreeMinimum(z->rightChild);
-
-        if (y->parent != z)
-        {
-            bstTreeTransplant(t, y, y->rightChild);
-            y->rightChild = z->rightChild;
-            y->rightChild->parent = y;
-        }
-
-        bstTreeTransplant(t, z, y);
-        y->leftChild = z->leftChild;
-        y->leftChild->parent = y;
-    }
-
-    free(z);
-}
-
-void deleteTree(struct treeNode *node)
-{
-    if (node->leftChild)
-    {
-        deleteTree(node->leftChild);
-        free(node->leftChild);
-    }
-    if (node->rightChild)
-    {
-        deleteTree(node->rightChild);
-        free(node->rightChild);
-    }
-}
-
-void deleteTreeRB(struct treeNodeRB *node)
-{
-    if (node->leftChild)
-    {
-        deleteTreeRB(node->leftChild);
-        free(node->leftChild);
-    }
-    if (node->rightChild)
-    {
-        deleteTreeRB(node->rightChild);
-        free(node->rightChild);
-    }
-}
-
-void rbTransplant()
-{
-}
-
-void rbtTreeDelete(struct treeRB *t, struct treeNodeRB *z)
-{
-
-    struct treeNodeRB *y;
-
-    if (z->leftChild == NULL)
-    {
-        // bstTreeTransplant(t, z, z->rightChild);
-    }
-
-    if (z->leftChild != NULL && z->rightChild == NULL)
-    {
-        // bstTreeTransplant(t, z, z->leftChild);
-    }
-
-    if (z->leftChild != NULL && z->rightChild != NULL)
-    {
-        // struct treeNodeRB *y = bstTreeMinimum(z->rightChild);
-
-        if (y->parent != z)
-        {
-            // bstTreeTransplant(t, y, y->rightChild);
-            y->rightChild = z->rightChild;
-            y->rightChild->parent = y;
-        }
-
-        // bstTreeTransplant(t, z, y);
-        y->leftChild = z->leftChild;
-        y->leftChild->parent = y;
-    }
-
-    free(z);
-}
-
-void empty(struct tree *t)
-{
-    if (t->root != NULL)
-    {
-        deleteTree(t->root);
-    }
-
-    free(t);
-}
-
-// void emptyRB(struct treeRB *t)
-// {
-
-//     // if (t->root != NULL)
-//     // {
-//     //     deleteTreeRB(t->root);
-//     // }
-
-//     free(t);
-// }
-
 void treeRightRotate(struct treeRB *t, struct treeNodeRB *x)
 {
 
@@ -448,6 +297,257 @@ void treeLeftRotate(struct treeRB *t, struct treeNodeRB *x)
 
     y->leftChild = x;
     x->parent = y;
+}
+
+void bstTreeTransplant(struct tree *t, struct treeNode *u, struct treeNode *v)
+{
+    if (u->parent == NULL)
+    {
+        t->root = v;
+    }
+
+    if (u->parent != NULL && u == u->parent->leftChild)
+    {
+        u->parent->leftChild = v;
+    }
+
+    if (u->parent != NULL && u == u->parent->rightChild)
+    {
+        u->parent->rightChild = v;
+    }
+
+    if (v != NULL)
+    {
+        v->parent = u->parent;
+    }
+}
+
+void rbtTreeTransplant(struct treeRB *t, struct treeNodeRB *u, struct treeNodeRB *v)
+{
+    if (u->parent == t_nil)
+    {
+        t->root = v;
+    }
+    else if (u == u->parent->leftChild)
+    {
+        u->parent->leftChild = v;
+    }
+    else if (u->parent->rightChild == v)
+    {
+        v->parent = u->parent;
+    }
+}
+
+struct treeNode *bstTreeMinimum(struct treeNode *x)
+{
+    if (x->leftChild == NULL)
+    {
+        return x;
+    }
+
+    return bstTreeMinimum(x->leftChild);
+}
+
+void bstTreeDelete(struct tree *t, struct treeNode *z)
+{
+    if (z->leftChild == NULL)
+    {
+        bstTreeTransplant(t, z, z->rightChild);
+    }
+
+    if (z->leftChild != NULL && z->rightChild == NULL)
+    {
+        bstTreeTransplant(t, z, z->leftChild);
+    }
+
+    if (z->leftChild != NULL && z->rightChild != NULL)
+    {
+        struct treeNode *y = bstTreeMinimum(z->rightChild);
+
+        if (y->parent != z)
+        {
+            bstTreeTransplant(t, y, y->rightChild);
+            y->rightChild = z->rightChild;
+            y->rightChild->parent = y;
+        }
+
+        bstTreeTransplant(t, z, y);
+        y->leftChild = z->leftChild;
+        y->leftChild->parent = y;
+    }
+
+    // free(z);
+}
+
+struct treeNodeRB *rbtTreeMinimum(struct treeNodeRB *x)
+{
+    if (x->leftChild == NULL)
+    {
+        return x;
+    }
+
+    return rbtTreeMinimum(x->leftChild);
+}
+
+void rbtTreeDeleteFixup(struct treeRB *t, struct treeNodeRB *x)
+{
+    struct treeNodeRB *w;
+    while (x != t->root && x->color == BLACK)
+    {
+        if (x == x->parent->leftChild)
+        {
+            w = x->parent->rightChild;
+
+            if (w->color == RED)
+            {
+                w->color = BLACK;
+                x->parent->color = RED;
+
+                treeLeftRotate(t, x->parent);
+
+                w = x->parent->rightChild;
+
+                if (w->leftChild->color == BLACK && w->rightChild->color == BLACK)
+                {
+                    w->color = RED;
+                    x = x->parent;
+                }
+                else if (w->rightChild->color == BLACK)
+                {
+                    w->leftChild->color = BLACK;
+                    w->color = RED;
+                    treeRightRotate(t, w);
+                    w = x->parent->rightChild;
+                }
+
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->rightChild->color = BLACK;
+
+                treeLeftRotate(t, x->parent);
+                x = t->root;
+            }
+        }
+        else
+        {
+            w = x->parent->leftChild;
+
+            if (w->color == RED)
+            {
+                w->color = BLACK;
+                x->parent->color = RED;
+
+                treeLeftRotate(t, x->parent);
+
+                w = x->parent->leftChild;
+
+                if (w->rightChild->color == BLACK && w->leftChild->color == BLACK)
+                {
+                    w->color = RED;
+                    x = x->parent;
+                }
+                else if (w->leftChild->color == BLACK)
+                {
+                    w->rightChild->color = BLACK;
+                    w->color = RED;
+                    treeRightRotate(t, w);
+                    w = x->parent->leftChild;
+                }
+
+                w->color = x->parent->color;
+                x->parent->color = BLACK;
+                w->leftChild->color = BLACK;
+
+                treeLeftRotate(t, x->parent);
+                x = t->root;
+            }
+        }
+    }
+
+    x->color = BLACK;
+}
+
+void rbtTreeDelete(struct treeRB *t, struct treeNodeRB *z)
+{
+
+    struct treeNodeRB *y = z;
+    struct treeNodeRB *x;
+
+    int yOrigColor = y->color;
+
+    if (z->leftChild == t_nil)
+    {
+        x = z->rightChild;
+        rbtTreeTransplant(t, z, z->rightChild);
+    }
+
+    else if (z->rightChild == t_nil)
+    {
+        x = z->leftChild;
+        rbtTreeTransplant(t, z, z->leftChild);
+    }
+
+    else
+    {
+        struct treeNodeRB *y = rbtTreeMinimum(z->rightChild);
+        yOrigColor = y->color;
+        x = y->rightChild;
+
+        if (y->parent == z)
+        {
+            x->parent = y;
+        }
+        else
+        {
+            rbtTreeTransplant(t, y, y->rightChild);
+            y->rightChild = z->rightChild;
+            y->rightChild->parent = y;
+        }
+
+        rbtTreeTransplant(t, z, y);
+        y->leftChild = z->leftChild;
+        y->leftChild->parent = y;
+        y->color = z->color;
+
+        if (yOrigColor == BLACK)
+        {
+            rbtTreeDeleteFixup(t, x);
+        }
+    }
+
+    // free(z);
+}
+
+void bstFreeNodes(struct tree *t, struct treeNode *x)
+{
+    if (x != NULL)
+    {
+        bstFreeNodes(t, x->rightChild);
+        bstFreeNodes(t, x->leftChild);
+        free(x);
+    }
+}
+
+void emptyBST(struct tree *t)
+{
+    bstFreeNodes(t, t->root);
+    free(t);
+}
+
+void rbtFreeNodes(struct treeRB *t, struct treeNodeRB *x)
+{
+    if (x != t_nil)
+    {
+        rbtFreeNodes(t, x->rightChild);
+        rbtFreeNodes(t, x->leftChild);
+        free(x);
+    }
+}
+
+void emptyRB(struct treeRB *t)
+{
+    rbtFreeNodes(t, t->root);
+    free(t);
 }
 
 void rbtTreeInsertFixUpLeft(struct treeRB *t, struct treeNodeRB *z)
@@ -681,9 +781,10 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
     for (i = 0; i < maxInstances; i++)
     {
-        // initialize(T)
+        // initialize the BST
         struct tree *t = (struct tree *)malloc(sizeof(struct tree));
-        t->root = NULL;
+        t->root = getRandomNode();
+        /////////////////////
 
         clock_t t_start, t_end, t_elapsed;
 
@@ -711,7 +812,7 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
         t_tot = t_tot + t_elapsed;
 
         // empty
-        free(t);
+        emptyBST(t);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -732,26 +833,21 @@ double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxIns
 #if DEBUG_ENABLED
         fprintf(stderr, "\nsingleExperimentRBT iteration: %d\n", i);
 #endif
-        // init_TNIL();
-        //  initialize(T)
+        // initialize the RBT
         struct treeRB *t = (struct treeRB *)malloc(sizeof(struct treeRB));
         // create the root node
         init_TNIL();
         struct treeNodeRB *rootNode = getRandomNodeRBT();
         rootNode->color = BLACK;
         t->root = rootNode;
+        /////////////////////
 
-        clock_t t_start,
-            t_end, t_elapsed;
+        clock_t t_start, t_end, t_elapsed;
 
         t_start = clock();
 
         for (j = 0; j < maxKeys; j++)
         {
-
-            // struct treeNodeRB *newNode = getRandomNodeRBT();
-            // fprintf(stderr, "\nnewNode->key: %d\n", newNode->key);
-
             rbtTreeInsert(t, getRandomNodeRBT());
         }
 
@@ -772,7 +868,7 @@ double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxIns
         t_tot = t_tot + t_elapsed;
 
         // Empty
-        free(t);
+        emptyRB(t);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -783,7 +879,7 @@ void experiment(int minKeys, int maxKeys)
     fprintf(stderr, "start experiment\n");
 
     int maxInstances = 5;
-    int step = 100;
+    int step = 50;
     int percentageSearch = 60;
     int keys, maxSearch, maxDelete;
 
