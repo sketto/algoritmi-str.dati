@@ -7,6 +7,7 @@
 #define RED 1
 #define BLACK 0
 #define DEBUG_ENABLED 0
+#define T_PARAM 3
 
 int SEED = 200;
 
@@ -36,11 +37,11 @@ struct treeNodeRB
     struct treeNodeRB *rightChild;
 };
 
-struct treeNodeRB T_Nil_rbtNode;           // defining the T_Nil node
-struct treeNodeRB *t_nil = &T_Nil_rbtNode; // using it as the sentinel
+// struct treeNodeRB T_Nil_rbtNode;           // defining the T_Nil node
+struct treeNodeRB *t_nil; // using it as the sentinel
 void init_TNIL()
 {
-    // t_nil = (struct treeNodeRB *)malloc(sizeof(struct treeNodeRB));
+    t_nil = (struct treeNodeRB *)malloc(sizeof(struct treeNodeRB));
     t_nil->color = BLACK;
     t_nil->parent = NULL;
     t_nil->leftChild = NULL;
@@ -54,88 +55,34 @@ struct treeRB
     struct treeNodeRB *root;
 };
 
-// struct treeNodeRBT *createRoot()
+struct B_tree_node
+{
+    int keys[2 * T_PARAM];
+    int leaf;
+    struct B_tree_node *parent;
+    struct B_tree_node *children[2 * T_PARAM + 1];
+};
+
+struct Btree
+{
+    int cardinality;
+    struct B_tree_node *root;
+};
+
+// void BtreeInsert(struct Btree *t, struct B_tree_node *k)
 // {
-//     struct treeNodeRB *temp = (struct treeNodeRB *)malloc(sizeof(struct treeNodeRB));
-//     temp->key = rand() % SEED;
-//     temp->color = BLACK;
-//     temp->leftChild = TNIL();
-//     temp->rightChild = TNIL();
-//     temp->parent = TNIL();
+//     struct B_tree_node *r = t->root;
 
-//     return temp;
-// };
+//     if (r->keys == 2 * T_PARAM - 1)
+//     {
+//         struct B_tree_node *s = malloc(sizeof(struct B_tree_node *));
+//         t->root = s;
+//         s->leaf = 0;
+//         s->keys = 0;
+//         s->children = r;
+//     }
+// }
 
-void printBstTree(struct tree *t)
-{
-    printf("\nROOT key: %d\n", t->root->key);
-
-    if (t->root->leftChild != NULL)
-    {
-
-        printf("\nleft sub-tree\n");
-        struct treeNode *child = t->root->leftChild;
-        printf("%d\n", child->key);
-
-        while (child->leftChild != NULL)
-        {
-            child = child->leftChild;
-            printf("%d\n", child->key);
-        }
-    }
-    if (t->root->rightChild != NULL)
-    {
-        printf("\nright sub-tree\n");
-        struct treeNode *child = t->root->rightChild;
-        printf("%d\n", child->key);
-
-        while (child->rightChild != NULL)
-        {
-            child = child->rightChild;
-            printf("%d\n", child->key);
-        }
-    }
-
-    // if (t->root->rightChild != NULL)
-    // {
-    //     printf("-->%d\n", t->root->rightChild->key);
-    // }
-}
-
-void printRBTTree(struct treeRB *t)
-{
-    printf("\nROOT key: %d\n", t->root->key);
-
-    if (t->root->leftChild != t_nil)
-    {
-        printf("\nleft sub-tree\n");
-        struct treeNodeRB *child = t->root->leftChild;
-        printf("%d\n", child->key);
-
-        while (child->leftChild != t_nil)
-        {
-            child = child->leftChild;
-            printf("%d\n", child->key);
-        }
-    }
-    if (t->root->rightChild != t_nil)
-    {
-        printf("\nright sub-tree\n");
-        struct treeNodeRB *child = t->root->rightChild;
-        printf("%d\n", child->key);
-
-        while (child->rightChild != t_nil)
-        {
-            child = child->rightChild;
-            printf("%d\n", child->key);
-        }
-    }
-
-    // if (t->root->rightChild != NULL)
-    // {
-    //     printf("-->%d\n", t->root->rightChild->key);
-    // }
-}
 void bstTreeInsert(struct tree *t, struct treeNode *z)
 {
     struct treeNode *y = NULL;
@@ -375,8 +322,6 @@ void bstTreeDelete(struct tree *t, struct treeNode *z)
         y->leftChild = z->leftChild;
         y->leftChild->parent = y;
     }
-
-    // free(z);
 }
 
 struct treeNodeRB *rbtTreeMinimum(struct treeNodeRB *x)
@@ -515,39 +460,31 @@ void rbtTreeDelete(struct treeRB *t, struct treeNodeRB *z)
         }
     }
 
-    // free(z);
+    free(z);
 }
 
-void bstFreeNodes(struct tree *t, struct treeNode *x)
+void TreeDelete(struct treeNode *node)
 {
-    if (x != NULL)
+    if (node == NULL)
     {
-        bstFreeNodes(t, x->rightChild);
-        bstFreeNodes(t, x->leftChild);
-        free(x);
+        return;
     }
+    TreeDelete(node->leftChild);
+    TreeDelete(node->rightChild);
+
+    // printf("\nfreeing node with key: %d\n", node->key);
+    free(node);
 }
 
-void emptyBST(struct tree *t)
+void rbDeleteTree(struct treeNodeRB *node)
 {
-    bstFreeNodes(t, t->root);
-    free(t);
-}
-
-void rbtFreeNodes(struct treeRB *t, struct treeNodeRB *x)
-{
-    if (x != t_nil)
+    if (node == t_nil)
     {
-        rbtFreeNodes(t, x->rightChild);
-        rbtFreeNodes(t, x->leftChild);
-        free(x);
+        return;
     }
-}
-
-void emptyRB(struct treeRB *t)
-{
-    rbtFreeNodes(t, t->root);
-    free(t);
+    rbDeleteTree(node->leftChild);
+    rbDeleteTree(node->rightChild);
+    free(node);
 }
 
 void rbtTreeInsertFixUpLeft(struct treeRB *t, struct treeNodeRB *z)
@@ -726,51 +663,8 @@ void rbtTreeInsert(struct treeRB *t, struct treeNodeRB *z)
     //    z->leftChild = t_nil;
     //  z->rightChild = t_nil;
     // z->color = RED;
-    // fprintf(stderr, "\ncolore root: %d\n", t->root->color);
-    //  sleep(10);
+
     rbtTreeInsertFixUp(t, z);
-}
-
-void inorderTraversal(struct treeNode *root)
-{
-    if (root != NULL)
-    {
-        inorderTraversal(root->leftChild);
-        fprintf(stderr, "%d ", root->key);
-        inorderTraversal(root->rightChild);
-    }
-}
-
-void inorderTraversalRBT(struct treeNodeRB *root)
-{
-    fprintf(stderr, "\n--------inorderTraversalRBT------\n");
-    if (root != t_nil)
-    {
-        inorderTraversalRBT(root->leftChild);
-        fprintf(stderr, "%d ", root->key);
-        inorderTraversalRBT(root->rightChild);
-    }
-
-    fprintf(stderr, "\n--------------\n");
-}
-
-void printRBTNode(struct treeNodeRB *node)
-{
-    if (node == t_nil)
-    {
-        return;
-    }
-
-    fprintf(stderr, "\n------------\n");
-    if (&(node->key))
-    {
-        fprintf(stderr, "\nKEY: %d\n", node->key);
-    }
-    if (&(node->color))
-    {
-        fprintf(stderr, "\nCOLOR: %d\n", node->color);
-    }
-    fprintf(stderr, "\n------------\n");
 }
 
 double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
@@ -797,13 +691,15 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
         for (j = 0; j < maxSearch; j++)
         {
-            bstTreeSearch(t->root, getRandomNode()->key);
+            struct treeNode *tmp = getRandomNode();
+            bstTreeSearch(t->root, tmp->key);
+            free(tmp);
         }
 
-        for (j = 0; j < maxDelete; j++)
-        {
-            bstTreeDelete(t, getRandomNode());
-        }
+        // for (j = 0; j < maxDelete; j++)
+        // {
+        //     bstTreeDelete(t, getRandomNode());
+        // }
 
         t_end = clock();
 
@@ -812,7 +708,9 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
         t_tot = t_tot + t_elapsed;
 
         // empty
-        emptyBST(t);
+        TreeDelete(t->root);
+        free(t);
+        // free(t_nil);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -820,19 +718,11 @@ double singleExperiment(int maxKeys, int maxSearch, int maxDelete, int maxInstan
 
 double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxInstances)
 {
-
-#if DEBUG_ENABLED
-    fprintf(stderr, "\nstart singleExperimentRBT\n");
-#endif
     clock_t t_tot = 0;
     int i, j;
 
     for (i = 0; i < maxInstances; i++)
     {
-
-#if DEBUG_ENABLED
-        fprintf(stderr, "\nsingleExperimentRBT iteration: %d\n", i);
-#endif
         // initialize the RBT
         struct treeRB *t = (struct treeRB *)malloc(sizeof(struct treeRB));
         // create the root node
@@ -853,13 +743,15 @@ double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxIns
 
         for (j = 0; j < maxSearch; j++)
         {
-            rbtTreeSearch(t->root, getRandomNodeRBT()->key);
+            struct treeNodeRB *tmp = getRandomNodeRBT();
+            rbtTreeSearch(t->root, tmp->key);
+            free(tmp);
         }
 
-        for (j = 0; j < maxDelete; j++)
-        {
-            rbtTreeDelete(t, getRandomNodeRBT());
-        }
+        // for (j = 0; j < maxDelete; j++)
+        // {
+        //     // rbtTreeDelete(t, getRandomNodeRBT());
+        // }
 
         t_end = clock();
 
@@ -868,7 +760,9 @@ double singleExperimentRBT(int maxKeys, int maxSearch, int maxDelete, int maxIns
         t_tot = t_tot + t_elapsed;
 
         // Empty
-        emptyRB(t);
+        rbDeleteTree(t->root);
+        free(t);
+        free(t_nil);
     }
 
     return (double)t_tot / (double)maxKeys;
@@ -879,7 +773,7 @@ void experiment(int minKeys, int maxKeys)
     fprintf(stderr, "start experiment\n");
 
     int maxInstances = 5;
-    int step = 50;
+    int step = 1;
     int percentageSearch = 60;
     int keys, maxSearch, maxDelete;
 
@@ -899,10 +793,42 @@ void experiment(int minKeys, int maxKeys)
     }
 }
 
+void printInorder(struct treeNode *node)
+{
+    if (node == NULL)
+        return;
+
+    /* first recur on left child */
+    printInorder(node->leftChild);
+
+    /* then print the data of node */
+    printf("%d ", node->key);
+
+    /* now recur on right child */
+    printInorder(node->rightChild);
+}
+
 int main()
 {
 
-    experiment(10, 10000);
+    experiment(10, 100);
+    // struct tree *t = (struct tree *)malloc(sizeof(struct tree));
+    // t->root = getRandomNode();
+    // bstTreeInsert(t, getRandomNode());
+    // printInorder(t->root);
+    // printf("\n");
+
+    // struct treeNode *tmp = getRandomNode();
+    // printf("tmp->key: %d\n", tmp->key);
+    // bstTreeDelete(t, tmp);
+    // free(tmp);
+    // tmp = getRandomNode();
+    // bstTreeSearch(t->root, tmp->key);
+    // free(tmp);
+
+    // printInorder(t->root);
+    // TreeDelete(t->root);
+    // free(t);
 
     // struct tree t;
     // t.root = NULL;
